@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全穀及未精製雜糧知識大會考</title>
+  <style>
+    :root {
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
+      --primary: #4a7c59;
+      --primary-hover: #3b6346;
+      --text-main: #333333;
+      --text-sub: #666666;
+      --correct-bg: #e8f5e9;
+      --correct-border: #4caf50;
+      --correct-text: #2e7d32;
+      --wrong-bg: #ffebee;
+      --wrong-border: #ef5350;
+      --wrong-text: #c62828;
+      --border-color: #e0e0e0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 20px 10px;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding: 10px;
+      position: relative;
+    }
+
+    header h1 {
+      color: var(--primary);
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+    }
+
+    /* 設計人標籤樣式 */
+    .author-tag {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #e8f5e9;
+      color: var(--primary);
+      border: 1px solid #c8e6c9;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+
+    .quiz-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .question-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-main);
+      display: flex;
+      gap: 8px;
+    }
+
+    .q-num {
+      color: var(--primary);
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      background: #fff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-main);
+      width: 100%;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background-color: #f8faf8;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    /* 正確選項狀態 */
+    .option-btn.correct {
+      background-color: var(--correct-bg);
+      border-color: var(--correct-border);
+      color: var(--correct-text);
+      font-weight: bold;
+    }
+
+    /* 點選錯誤選項狀態 */
+    .option-btn.wrong {
+      background-color: var(--wrong-bg);
+      border-color: var(--wrong-border);
+      color: var(--wrong-text);
+    }
+
+    /* 答案說明解析盒 */
+    .explanation {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      border-left: 4px solid var(--primary);
+      font-size: 0.9rem;
+      color: #444;
+      display: none;
+    }
+
+    .explanation strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--primary);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .author-tag {
+        position: static;
+        display: inline-block;
+        margin-bottom: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="author-tag">設計人：林珈朵營養師</div>
+      <h1>🌾 全穀及未精製雜糧大挑戰</h1>
+      <p>點選選項即刻揭曉答案與詳細解析！</p>
+    </header>
+
+    <div id="quiz-list"></div>
+
+    <footer>
+      <p>衛生福利部國民健康署 飲食衛教推廣素材</p>
+    </footer>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        id: 1,
+        question: "請問以下何者不屬於『全穀及未精製雜糧食物』？",
+        options: ["A. 藜麥", "B. 牛蒡", "C. 南瓜", "D. 地瓜"],
+        answer: 1, // B
+        explanation: "牛蒡在營養學分類屬於「蔬菜類」。藜麥為全穀類，南瓜與地瓜則為未精製雜糧主食。"
+      },
+      {
+        id: 2,
+        question: "請問以下何者屬於『全穀及未精製雜糧食物』？",
+        options: ["A. 蓮藕", "B. 茄子", "C. 黑甜菜", "D. 苦瓜"],
+        answer: 0, // A
+        explanation: "蓮藕富含澱粉，屬於未精製雜糧（根莖類主食）。茄子、黑甜菜與苦瓜皆屬於蔬菜類。"
+      },
+      {
+        id: 3,
+        question: "『全穀及未精製雜糧食物』富含許多營養素，不包含以下哪種？",
+        options: ["A. 維生素B群", "B. 維生素E", "C. 膳食纖維", "D. 維生素D"],
+        answer: 3, // D
+        explanation: "全穀雜糧富含維生素B群、E及膳食纖維。維生素D主要靠曬太陽合成或來自蛋黃、深海魚及菇類。"
+      },
+      {
+        id: 4,
+        question: "『全穀及未精製雜糧食物』大部分比精製主食擁有更多營養素！不包含哪種營養素呢？",
+        options: ["A. 膳食纖維", "B. 鎂、鐵", "C. 鋅、鉀", "D. 銅"],
+        answer: 3, // D
+        explanation: "國健署推廣重點在於未精製雜糧含有豐富的膳食纖維，以及關鍵礦物質如鎂、鐵、鋅、鉀等。"
+      },
+      {
+        id: 5,
+        question: "大家都說要多吃『全穀及未精製雜糧食物』，因為有很多好處，那不包含哪種呢？",
+        options: ["A. 讓腸道菌相健康", "B. 控制血糖、血脂", "C. 控制血壓、預防心臟病", "D. 預防基因突變"],
+        answer: 3, // D
+        explanation: "吃全穀雜糧能改善腸道菌相、穩定血糖血脂與血壓；「預防基因突變」並非其臨床宣稱之保健功效。"
+      },
+      {
+        id: 6,
+        question: "『全穀及未精製雜糧食物』真的營養很多又健康，適合哪些人？",
+        options: ["A. 銀髮族", "B. 上班族", "C. 孕婦", "D. 以上皆是"],
+        answer: 3, // D
+        explanation: "全穀及未精製雜糧營養豐富，無論銀髮族、上班族或孕婦等各年齡層都很適合替換精製白米。"
+      },
+      {
+        id: 7,
+        question: "今天來到了滷味店，要挑哪項，增加自己的『全穀及未精製雜糧食物』呢？",
+        options: ["A. 玉米", "B. 王子麵", "C. 黃豆", "D. 黃豆芽"],
+        answer: 0, // A
+        explanation: "玉米屬於未精製雜糧類。王子麵為精製麵條，黃豆為豆蛋白類，黃豆芽則屬於蔬菜類。"
+      },
+      {
+        id: 8,
+        question: "上班到了午餐時間，要如何選來增加『全穀及未精製雜糧食物』呢？",
+        options: ["A. 便當店白飯換成紫米飯", "B. 自助餐店夾牛蒡", "C. 牛肉麵店點餡餅", "D. 小吃店點白麵條"],
+        answer: 0, // A
+        explanation: "紫米飯屬於未精製全穀類。牛蒡為蔬菜，餡餅與白麵條則屬於精製澱粉。"
+      },
+      {
+        id: 9,
+        question: "生活中有許多增加『全穀及未精製雜糧食物』的方式，哪項非正確方式？",
+        options: ["A. 早餐吃燕麥片牛奶", "B. 午餐選地瓜飯或蕎麥飯", "C. 下午喝無糖杏仁飲", "D. 晚餐飯後喝杯紫米紅豆湯"],
+        answer: 2, // C
+        explanation: "杏仁屬於「堅果種子類」，杏仁飲非全穀雜糧。燕麥、地瓜、蕎麥、紫米與紅豆才是未精製雜糧。"
+      },
+      {
+        id: 10,
+        question: "『全穀及未精製雜糧食物』一天建議要吃到多少？",
+        options: ["A. 盡量以全穀及未精製雜糧食物為主", "B. 全穀及未精製雜糧每天至少1次", "C. 全穀及未精製雜糧每週至少1次", "D. 健康成人每月至少1次"],
+        answer: 0, // A
+        explanation: "依據衛福部飲食指南，建議每天三餐的主食應盡量以全穀及未精製雜糧為主（或至少佔全日主食 1/3 以上）。"
+      }
+    ];
+
+    function renderQuiz() {
+      const container = document.getElementById('quiz-list');
+
+      quizData.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+
+        const title = document.createElement('div');
+        title.className = 'question-title';
+        title.innerHTML = `<span class="q-num">Q${index + 1}.</span> <span>${q.question}</span>`;
+
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'options';
+
+        const expDiv = document.createElement('div');
+        expDiv.className = 'explanation';
+        expDiv.id = `exp-${index}`;
+        expDiv.innerHTML = `<strong>💡 解析說明：</strong>${q.explanation}`;
+
+        q.options.forEach((opt, optIndex) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.innerText = opt;
+          btn.onclick = () => checkAnswer(index, optIndex, q.answer);
+          optionsDiv.appendChild(btn);
+        });
+
+        card.appendChild(title);
+        card.appendChild(optionsDiv);
+        card.appendChild(expDiv);
+        container.appendChild(card);
+      });
+    }
+
+    function checkAnswer(qIndex, selectedIndex, correctIndex) {
+      const card = document.getElementsByClassName('quiz-card')[qIndex];
+      const buttons = card.querySelectorAll('.option-btn');
+      const expDiv = document.getElementById(`exp-${qIndex}`);
+
+      // 禁用該題所有按鈕，防止重複點選
+      buttons.forEach(btn => btn.disabled = true);
+
+      if (selectedIndex === correctIndex) {
+        buttons[selectedIndex].classList.add('correct');
+      } else {
+        buttons[selectedIndex].classList.add('wrong');
+        buttons[correctIndex].classList.add('correct'); // 自動標示正確答案
+      }
+
+      // 展開說明
+      expDiv.style.display = 'block';
+    }
+
+    // 初始化載入
+    window.onload = renderQuiz;
+  </script>
+</body>
+</html>
